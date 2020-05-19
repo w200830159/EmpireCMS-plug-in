@@ -45,6 +45,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user[userid] = $_GET['userid'];
     $user[username] = $_GET['username'];
     $phome = $_GET['phome'];
+
+    if (!in_array($phome, array('PayToFen', 'PayToMoney', 'ShopPay', 'BuyGroupPay'))) {
+        printerror('您来自的链接不存在', '', 1, 0, 1);
+    }
+
+    include('../payfun.php');
+    if ($phome == 'PayToFen') {
+        $pr = $empire->fetch1("select paymoneytofen,payminmoney from {$dbtbpre}enewspublic limit 1");
+        $fen = floor($money) * $pr[paymoneytofen];
+        $paybz = '购买点数: ' . $fen;
+        PayApiBuyFen($fen, $money, $paybz, $orderid, $user[userid], $user[username], $paytype);
+    } elseif ($phome == 'PayToMoney') {
+        $paybz = '存预付款';
+        PayApiPayMoney($money, $paybz, $orderid, $user[userid], $user[username], $paytype);
+    } elseif ($phome == 'ShopPay') {
+        include('../../data/dbcache/class.php');
+        $paybz = '商城购买 [!--ddno--] 的订单(ddid=' . $ddid . ')';
+        PayApiShopPay($ddid, $money, $paybz, $orderid, '', '', $paytype);
+    } elseif ($phome == 'BuyGroupPay') {
+        include("../../data/dbcache/MemberLevel.php");
+        PayApiBuyGroupPay($bgid, $money, $orderid, $user[userid], $user[username], $user[groupid], $paytype);
+    }
+
 } else {
     //页面跳转用,拿到参数
     if (in_array($phome, array('PayToFen', 'PayToMoney', 'BuyGroupPay'))) {
@@ -61,29 +84,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
     }
+    if ($phome == 'PayToFen') {
+        $pr = $empire->fetch1("select paymoneytofen,payminmoney from {$dbtbpre}enewspublic limit 1");
+        $fen = floor($money) * $pr[paymoneytofen];
+        $paybz = '购买点数: ' . $fen;
+        printerror('您已成功购买 '.$fen.' 点','../../../',1,0,1);
+    } elseif ($phome == 'PayToMoney') {
+        printerror('您已成功存预付款 '.$money.' 元','../../../',1,0,1);
+    } elseif ($phome == 'ShopPay') {
+        printerror('您已成功购买此订单','../../ShopSys/buycar/',1,0,1);
+    } elseif ($phome == 'BuyGroupPay') {
+        printerror('您已成功充值','../../../',1,0,1);
+    }else{
+        printerror('您已成功','../../ShopSys/buycar/',1,0,1);
+    }
 }
 
-if (!in_array($phome, array('PayToFen', 'PayToMoney', 'ShopPay', 'BuyGroupPay'))) {
-    printerror('您来自的链接不存在', '', 1, 0, 1);
-}
-
-include('../payfun.php');
-if ($phome == 'PayToFen') {
-    $pr = $empire->fetch1("select paymoneytofen,payminmoney from {$dbtbpre}enewspublic limit 1");
-    $fen = floor($money) * $pr[paymoneytofen];
-    $paybz = '购买点数: ' . $fen;
-    PayApiBuyFen($fen, $money, $paybz, $orderid, $user[userid], $user[username], $paytype);
-} elseif ($phome == 'PayToMoney') {
-    $paybz = '存预付款';
-    PayApiPayMoney($money, $paybz, $orderid, $user[userid], $user[username], $paytype);
-} elseif ($phome == 'ShopPay') {
-    include('../../data/dbcache/class.php');
-    $paybz = '商城购买 [!--ddno--] 的订单(ddid=' . $ddid . ')';
-    PayApiShopPay($ddid, $money, $paybz, $orderid, '', '', $paytype);
-} elseif ($phome == 'BuyGroupPay') {
-    include("../../data/dbcache/MemberLevel.php");
-    PayApiBuyGroupPay($bgid, $money, $orderid, $user[userid], $user[username], $user[groupid], $paytype);
-}
 
 db_close();
 $empire = null;

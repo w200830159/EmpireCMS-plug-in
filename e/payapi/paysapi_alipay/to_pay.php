@@ -8,8 +8,11 @@ eCheckCloseMods('pay');
 $order_id = $ddno ? $ddno : time();
 esetcookie("checkpaysession", $order_id, 0);
 $phome = $_POST['phome'];
+if(is_null($phome)||$phome==""){
+    $phome=getcvar('payphome');
+}
 if (!in_array($phome, array('PayToFen', 'PayToMoney', 'ShopPay', 'BuyGroupPay'))) {
-    printerror('您来自的链接不存在', '', 1, 0, 1);
+    printerror('5555555555|'.$phome, '', 1, 0, 1);
 }
 
 $body = 'ECMS';
@@ -44,8 +47,8 @@ $username = urlencode($user[username]);
 
 
 $amount = (int)($money * 100);
-$notify_url = $PayReturnUrlQz . "e/payapi/bapp/payend.php?phome=" . $phome. "&ddid=" . $ddid. "&bgid=" . $bgid. "&userid=" . $userid. "&username=" . $username;
-$return_url =$PayReturnUrlQz . "e/payapi/bapp/payend.php?phome=" . $phome . "&orderid=" . $order_id . "&money=" . $amount;
+$notify_url = $PayReturnUrlQz . "e/payapi/paysapi_alipay/payend.php?phome=" . $phome. "&ddid=" . $ddid. "&bgid=" . $bgid. "&userid=" . $userid. "&username=" . $username;
+$return_url =$PayReturnUrlQz . "e/payapi/paysapi_alipay/payend.php?phome=" . $phome . "&orderid=" . $order_id . "&money=" . $amount;
 
 // $order_id = $order['log_id'];
 $istype = 1;
