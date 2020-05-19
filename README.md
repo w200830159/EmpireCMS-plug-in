@@ -16,6 +16,8 @@
 1. 在 `商户号(ID)` 中填入 paysapi 的 `Uid`，在 `密钥(KEY)` 中填入 paysapi 的 `token`，点击 `设置` 即可。
 
 
+### 请在右上角,按下面这张图的指引下载zip包
+
 ![Image text](/download.jpg)
 
 
