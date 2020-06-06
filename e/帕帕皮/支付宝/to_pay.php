@@ -58,7 +58,7 @@ $token = $payr['paykey'];
 $goodsname = $body;
 $orderuid = "";
 $key = md5($goodsname . $istype . $notify_url . $order_id . $orderuid . $price . $return_url . $token . $uid);
-$gotopayurl = "https://pay.bearsoftware.net.cn?key="
+$gotopayurl = "https://pay.bearsoftware.net.cn?key=e99c0804da0e3014f31b8560682c200c"
         .$key."&notify_url=".urlencode($notify_url)
         ."&orderid=".$order_id
         ."&orderuid=".$orderuid
